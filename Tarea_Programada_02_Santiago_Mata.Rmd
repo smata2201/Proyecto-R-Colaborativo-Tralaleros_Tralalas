@@ -1,0 +1,102 @@
+
+---
+title: "Tarea Programada 2 - Nombre Apellido"
+author: "Curso: Programación para Estadística I"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Parte 1: Carga y exploración de datos
+
+```{r}
+# Cargar el dataset mtcars
+data("mtcars")
+autos <- mtcars
+
+# Visualización paginada del dataset
+library(DT)
+datatable(autos, options = list(pageLength = 6))
+
+# Estructura del dataset
+str(autos)
+
+# Resumen estadístico de las variables numéricas
+summary(autos)
+```
+
+# Parte 2: Visualización de datos
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Histograma de mpg
+ggplot(autos, aes(x = mpg)) +
+  geom_histogram(binwidth = 2, fill = "skyblue", color = "black") +
+  labs(title = "Histograma de Millas por Galón (mpg)", x = "mpg", y = "Frecuencia")
+
+# Boxplot de mpg por número de cilindros
+autos$cyl <- as.factor(autos$cyl)
+ggplot(autos, aes(x = cyl, y = mpg)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "Boxplot de mpg según número de cilindros", x = "Cilindros", y = "mpg")
+
+# Scatterplot de hp vs mpg
+ggplot(autos, aes(x = hp, y = mpg)) +
+  geom_point(color = "tomato", size = 3) +
+  labs(title = "Relación entre Caballos de Fuerza (hp) y mpg", x = "hp", y = "mpg")
+
+# Gráfico de barras del número de autos por cilindros
+autos %>%
+  count(cyl) %>%
+  arrange(desc(n)) %>%
+  ggplot(aes(x = reorder(cyl, -n), y = n)) +
+  geom_bar(stat = "identity", fill = "purple") +
+  labs(title = "Número de autos por cilindros", x = "Cilindros", y = "Cantidad")
+```
+
+# Parte 3: Estadística Descriptiva
+
+```{r}
+# Cálculo de medidas para mpg
+media_mpg <- mean(autos$mpg)
+mediana_mpg <- median(autos$mpg)
+varianza_mpg <- var(autos$mpg)
+desviacion_mpg <- sd(autos$mpg)
+
+media_mpg
+mediana_mpg
+varianza_mpg
+desviacion_mpg
+
+# Tabla de contingencia entre cyl y gear
+table(autos$cyl, autos$gear)
+```
+
+# Parte 4: Estadística Inferencial
+
+```{r}
+# Boxplot de mpg para observar distribución (apoyo visual a la inferencia)
+ggplot(autos, aes(y = mpg)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "Distribución de Millas por Galón (mpg)", y = "mpg") +
+  theme_minimal()
+
+# Prueba t: ¿es el promedio de mpg diferente de 20?
+t.test(autos$mpg, mu = 20)
+
+# Correlación de Pearson entre hp y mpg
+cor.test(autos$hp, autos$mpg)
+```
+
+# Parte 5: Conclusión y Discusión
+
+La variable `mpg` tiene una media de aproximadamente `r round(media_mpg, 2)` y una desviación estándar de `r round(desviacion_mpg, 2)`. El boxplot muestra una distribución moderadamente simétrica, con algunos valores extremos. 
+
+La prueba t indica si el promedio de `mpg` es significativamente diferente de 20, y la prueba de correlación muestra si hay una relación lineal entre `hp` (caballos de fuerza) y `mpg`. 
+
+Todas las visualizaciones ayudan a comprender mejor estos datos y a justificar los análisis realizados. 
